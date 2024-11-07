@@ -1,0 +1,95 @@
+﻿@using Nhom1.Models
+@using Nhom1.Helpers
+@{
+    ViewBag.Title = "Index";
+    var sanPham = (SanPham)ViewData["SanPham"];
+}
+
+<div class="container-DH container">
+    <div class="justify-content-center box-DH">
+        @if (@ViewBag.Error != null)
+        {
+            <div class="alert alert-danger"><h1 class="text-center">@ViewBag.Error</h1></div>
+        }
+        @if (@ViewBag.Success != null)
+        {
+            <div class="alert alert-success">@ViewBag.Success</div>
+        }
+        @if (@ViewBag.Error == null)
+        {
+            <h2>Đơn Hàng</h2>
+            <div class="row100">
+                <div class="cols lblSP">
+                    <p><b>Tên sản phẩm:</b> @sanPham.TenSanPham</p>
+                </div>
+                <div class="cols lblSP">
+                    @{
+            var gia = sanPham.KhuyenMai != null ? AppHelper.FormatMoney(sanPham.GiaBan - sanPham.KhuyenMai.SoTienGiam) : AppHelper.FormatMoney(sanPham.GiaBan);
+                    }
+                    <p><b>Giá:</b> @gia</p>
+                </div>
+            </div>
+            <div class="row100">
+                <div class="cols">
+                    <div class="Input-Box">
+                        <input id="inpHoTen" type="text" name="HoTen" required />
+                        <span class="txtDH">Họ và Tên</span>
+                        <span class="line"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row100">
+                <div class="cols">
+                    <div class="Input-Box">
+                        <input id="inpEmail" type="text" name="Email" required />
+                        <span class="txtDH">Email</span>
+                        <span class="line"></span>
+                    </div>
+                </div>
+                <div class="cols">
+                    <div class="Input-Box">
+                        <input id="inpSoDienThoai" type="text" name="SoDienThoai" required />
+                        <span class="txtDH">SĐT</span>
+                        <span class="line"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row100">
+                <div class="cols">
+                    <div class="Input-Box">
+                        <input id="inpDiaChi" type="text" name="DiaChi" required />
+                        <span class="txtDH">Địa Chỉ</span>
+                        <span class="line"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row100">
+                <div class="cols">
+                    <button class="btnThanhToan" onclick="thanhToan(@sanPham.SanPhamId)">Thanh toán</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function thanhToan(id) {
+        const hoTen = $("#inpHoTen").val();
+        const email = $("#inpEmail").val();
+        const soDienThoai = $("#inpSoDienThoai").val();
+        const diaChi = $("#inpDiaChi").val();
+        const idSanPham = id;
+
+        const donHang = {
+            HoTen: hoTen,
+            Email: email,
+            SoDienThoai: soDienThoai,
+            DiaChi: diaChi,
+            IdSanPham: idSanPham
+        };
+
+        $.post("/donhang/themdonhang", {json: JSON.stringify(donHang)},function(response){
+            successalert("Thanh Toán Thành Công")
+        });
+    }
+</script>

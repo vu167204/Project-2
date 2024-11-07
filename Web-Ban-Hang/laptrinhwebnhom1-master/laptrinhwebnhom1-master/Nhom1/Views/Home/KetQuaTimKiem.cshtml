@@ -1,0 +1,89 @@
+﻿@using Nhom1.Models;
+@using Nhom1.Helpers;
+
+@{
+    ViewBag.Title = "Kết quả tìm kiếm";
+    var listSanPham = (List<SanPham>)ViewData["ListSanPham"];
+    var soLuong = ViewBag.SoLuong;
+    var searchString = ViewBag.SearchString;
+    var listDienThoai = (List<SanPham>)ViewData["ListDienThoai"];
+    var listMayTinhBang = (List<SanPham>)ViewData["ListMayTinhBang"];
+}
+
+<div class="container pt-2 slider-three">
+    <h5>Có @soLuong kết quả tìm kiếm cho "<b>@searchString</b>" (0.0001 giây)</h5>
+    @if (@soLuong == 0)
+    {
+        <img src="/content/images/no-results.png"/>
+    }
+
+    @if (listDienThoai.Count > 0)
+    {
+        <div class="navigat border">
+            <h2>Kết quả cho điện thoại (@listDienThoai.Count)</h2>
+        </div>
+        <ul class="homeproduct border d-flex justify-content-center">
+            @foreach (var sanPham in listDienThoai)
+            {
+                <li class="product-img">
+                    <a href="/chitietsanpham?IdSanPham=@sanPham.SanPhamId">
+                        <img class="lazyloaded control" src='~/Content/@sanPham.ImgDaiDien' alt="@sanPham.TenSanPham" />
+                        <h3>@Html.DisplayFor(modelItem => @sanPham.TenSanPham)</h3>
+                        <div class="price">
+                            @{
+                var gia = sanPham.KhuyenMai != null ? sanPham.GiaBan - sanPham.KhuyenMai.SoTienGiam : sanPham.GiaBan;
+                var strGia = AppHelper.FormatMoney(gia);
+                            }
+                            <strong>@Html.DisplayFor(modelItem => strGia)</strong>
+                            @if (sanPham.KhuyenMai != null)
+                            {
+                                strGia = AppHelper.FormatMoney(sanPham.GiaBan);
+                                <span>@Html.DisplayFor(modelItem => strGia)</span>
+                            }
+                        </div>
+                        @if (sanPham.KhuyenMai != null)
+                        {
+                            strGia = AppHelper.FormatMoney(sanPham.KhuyenMai.SoTienGiam);
+                            <label class="discount1">Giảm @Html.DisplayFor(modelItem => strGia)</label>
+                        }
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+    
+    @if (listMayTinhBang.Count > 0)
+    {
+        <div class="navigat border">
+            <h2>Kết quả cho máy tính bảng (@listMayTinhBang.Count)</h2>
+        </div>
+        <ul class="homeproduct border d-flex justify-content-center">
+            @foreach (var sanPham in listMayTinhBang)
+            {
+                <li class="product-img">
+                    <a href="/chitietsanpham?IdSanPham=@sanPham.SanPhamId">
+                        <img class="lazyloaded control" src='~/Content/@sanPham.ImgDaiDien' alt="@sanPham.TenSanPham" />
+                        <h3>@Html.DisplayFor(modelItem => @sanPham.TenSanPham)</h3>
+                        <div class="price">
+                            @{
+                var gia = sanPham.KhuyenMai != null ? sanPham.GiaBan - sanPham.KhuyenMai.SoTienGiam : sanPham.GiaBan;
+                var strGia = AppHelper.FormatMoney(gia);
+                            }
+                            <strong>@Html.DisplayFor(modelItem => strGia)</strong>
+                            @if (sanPham.KhuyenMai != null)
+                            {
+                                strGia = AppHelper.FormatMoney(sanPham.GiaBan);
+                                <span>@Html.DisplayFor(modelItem => strGia)</span>
+                            }
+                        </div>
+                        @if (sanPham.KhuyenMai != null)
+                        {
+                            strGia = AppHelper.FormatMoney(sanPham.KhuyenMai.SoTienGiam);
+                            <label class="discount1">Giảm @Html.DisplayFor(modelItem => strGia)</label>
+                        }
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+</div>

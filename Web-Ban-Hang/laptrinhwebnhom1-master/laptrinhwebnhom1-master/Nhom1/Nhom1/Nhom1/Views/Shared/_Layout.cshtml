@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Nhóm 1</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/19bcddde9a.js"></script>
+    <link href="~/Content/slick.css" rel="stylesheet" />
+    <link href="~/Content/free-v4-font-face.min.css" rel="stylesheet" />
+    <link href="~/Content/free-v4-shims.min.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link rel="icon" href="~/Content/images/logo.png" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-warning shadow">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img width="150" height="50" src="~/Content/images/logo.png" />
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form class="form-inline ml-5 my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                        Search
+                    </button>
+                </form>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dienthoai.html"><b>Điện thoại</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/maytinhbang.html"><b>Máy tính bảng</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login.html"><b>Đăng nhập</b></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup.html"><b>Đăng ký</b></a>
+                    </li>
+                </ul>
+                <div class="nav-item"></div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        @RenderBody()
+    </main>
+    <footer class="page-footer font-small blue pt-4">
+        <div class="container-fluid text-center text-md-left">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 mt-md-0 mt-3">
+                        <h5 class="text-uppercase">Thành Viên</h5>
+                        <p>Trần Quốc Liêm</p>
+                        <p>Trần Hữu Nghĩa</p>
+                        <p>Lê Nguyễn Nhật Duỹ</p>
+                        <p>Trần Minh Trang</p>
+                    </div>
+                    <hr class="clearfix w-100 d-md-none pb-3">
+                    <div class="col-md-3 mb-md-0 mb-3">
+                        <h5 class="text-uppercase">Liên kết</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="/">Trang chủ</a>
+                            </li>
+                            <li>
+                                <a href="/dienthoai">Điện thoại</a>
+                            </li>
+                            <li>
+                                <a href="/maytinhbang">Máy tính bảng</a>
+                            </li>
+                            <li>
+                                <a href="/gioithieu">Giới thiệu</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 mb-md-0 mb-3">
+                        <h5 class="text-uppercase">Đề tài</h5>
+                        <p><b>Tên đề tài: </b>Website mua sắm điện thoại máy tính bảng online</p>
+                </div>
+                <div class="copyright">
+                    © Hai không mười chín.
+                    Công ty trách nhiệm vô hạn DzủAnkCiệc.
+                    GPDKKD: 3556353554 do sở KH & ĐT Thành phố Cần Thơ cấp ngày 28/09/2019.<br>
+                    Địa chỉ: 645/A54SD Nguyễn Zăn Cừ (mở rộng), Phường An Toàn, Quận Ninh Kiều, Tp. Cần Thơ.
+                    Điện thoại: 18001060.
+                    Email: kietlat@hoclai.com.
+                    Chịu trách nhiệm nội dung: Vũ Anh Kiệt.
+                </div>
+            </div>
+        </div>
+    </footer>
+    <a id="on_top" class="on_top hide" href="#top"><i class="fa-arrow-circle-up fa"></i></a>
+    <script src="~/Scripts/jquery-3.3.1.slim.min.js"></script>
+    <script src="~/Scripts/popper.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/slick.min.js"></script>
+    <script src="~/Scripts/main.js"></script>
+</body>
+</html>

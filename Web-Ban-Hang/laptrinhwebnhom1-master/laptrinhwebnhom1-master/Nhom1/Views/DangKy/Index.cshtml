@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Đăng ký";
+}
+
+<form class="center-form text-center p-0 container col-5 my-4" style="box-shadow: 0px 0px 10px #dbdbdb; border: 2px solid #dbdbdb;" action="/dangky" method="post">
+    <p class="h4 my-0 mb-4 bg-warning pt-3" style="padding-bottom: 18px; font-weight: 700">Đăng ký</p>
+    <div style="padding: 0px 10px 10px 10px;">
+        <input name="Username" autocomplete="off" type="text" id="defaultRegisterFormFullName" class="form-control mb-4" placeholder="Họ tên">
+        <input name="Email" type="email" autocomplete="off" id="defaultRegisterFormEmail" class="form-control mb-4" placeholder="E-mail">
+        <input name="Password" type="password" autocomplete="off" id="defaultRegisterFormPassword" class="form-control mb-4" placeholder="Mật khẩu">
+        <input name="PasswordConfirmation" type="text" autocomplete="off" id="defaultRegisterPhonePassword" class="form-control mb-4" placeholder="Số điện thoại">
+        <button class="btn btn-warning btn-block my-3" style="font-weight:600" type="submit">Đăng ký</button>
+    </div>
+    @ViewBag.form.Username
+</form>

@@ -1,0 +1,37 @@
+﻿@using Nhom1.Models
+@using Nhom1.Helpers
+@{
+    ViewBag.Title = "Điện thoại";
+    var listSanPham = (List<SanPham>)ViewData["ListSanPham"];
+}
+
+<div class="container pt-2 slider-three">
+    <ul class="homeproduct border d-flex justify-content-center">
+        @foreach (var sanPham in listSanPham)
+        {
+            <li class="product-img">
+                <a href="/chitietsanpham?IdSanPham=@sanPham.SanPhamId">
+                    <img class="lazyloaded control" src='~/Content/@sanPham.ImgDaiDien' alt="@sanPham.TenSanPham" />
+                    <h3>@Html.DisplayFor(modelItem => @sanPham.TenSanPham)</h3>
+                    <div class="price">
+                        @{
+            var gia = sanPham.KhuyenMai != null ? sanPham.GiaBan - sanPham.KhuyenMai.SoTienGiam : sanPham.GiaBan;
+            var strGia = AppHelper.FormatMoney(gia);
+                        }
+                        <strong>@Html.DisplayFor(modelItem => strGia)</strong>
+                        @if (sanPham.KhuyenMai != null)
+                        {
+                            strGia = AppHelper.FormatMoney(sanPham.GiaBan);
+                            <span>@Html.DisplayFor(modelItem => strGia)</span>
+                        }
+                    </div>
+                    @if (sanPham.KhuyenMai != null)
+                    {
+                        strGia = AppHelper.FormatMoney(sanPham.KhuyenMai.SoTienGiam);
+                        <label class="discount1">Giảm @Html.DisplayFor(modelItem => strGia)</label>
+                    }
+                </a>
+            </li>
+        }
+    </ul>
+</div>

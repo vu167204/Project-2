@@ -1,0 +1,749 @@
+﻿@using Nhom1.Models
+@using Nhom1.Helpers
+
+@{
+    ViewBag.Title = "QuanLySanPham";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var listSanPham = (List<SanPham>)ViewBag.ListSanPham;
+}
+
+<h2 class="text-center">Quản lý sản phẩm</h2>
+<button class="btn btn-lg btn-success my-2" data-toggle="modal" data-target="#modalThemSanPham" onclick="clearModal()">Thêm sản phẩm</button>
+<table class="table table-hover table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Loại sản phẩm</th>
+            <th>Hãng sản xuất</th>
+            <th>Giá nhập hàng</th>
+            <th>Giá bán</th>
+            <th>Tồn kho</th>
+            <th>Lượt xem</th>
+            <th>Trang chủ</th>
+            <th>Cập nhật</th>
+            <th>Xóa</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sanPham in @listSanPham)
+        {
+            <tr id="@sanPham.SanPhamId">
+                <td>@sanPham.SanPhamId</td>
+                <td>@sanPham.TenSanPham</td>
+                <td>@sanPham.LoaiSanPham.TenLoaiSanPham</td>
+                <td>@sanPham.HangSanXuat.TenHangSanXuat</td>
+                @{
+            var giaNhapHang = AppHelper.FormatNumber(sanPham.GiaNhapHang);
+            var giaBan = AppHelper.FormatNumber(sanPham.GiaBan);
+            var soLuongKho = AppHelper.FormatNumber(sanPham.SoLuongKho);
+            var luotXem = AppHelper.FormatNumber(sanPham.LuotXem);
+                }
+                <td>@giaNhapHang</td>
+                <td>@giaBan</td>
+                <td>@soLuongKho</td>
+                <td>@luotXem</td>
+                @{
+            var btnClasses = "btn " + (sanPham.HienThiTrangChu ? "btn-primary" : "btn-secondary");
+            var btnId = "btnToggleHome" + sanPham.SanPhamId;
+                }
+                <td id="@btnId"><button class="@btnClasses"><i class="fa fa-home" onclick="toggleHienThiTrangChu(@sanPham.SanPhamId)"></i></button></td>
+                <td><button class="btn btn-warning" data-toggle="modal" data-target="#modalCapNhatSanPham" onclick="loadSanPham(@sanPham.SanPhamId)"><i class="fa fa-edit"></i></button></td>
+                <td><button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirm" onclick="idSanPhamDelete = @sanPham.SanPhamId"><i class="fa fa-trash"></i></button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div class="modal fade" id="modalCapNhatSanPham" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Thông tin sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="profile" aria-selected="false">Cấu hình</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#promotions" role="tab" aria-controls="images" aria-selected="false">Khuyến mãi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#images" role="tab" aria-controls="images" aria-selected="false">Hình ảnh</a>
+                    </li>
+                </ul>
+                <div class="tab-content border p-3" id="myTabContent">
+                    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                        <form>
+                            <div class="custom-control custom-switch no-select pb-2 d-flex justify-content-end">
+                                <input type="checkbox" class="custom-control-input" id="swHome">
+                                <label class="custom-control-label" for="swHome">Hiển thị trang chủ</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="inpTenSanPham">Tên sản phẩm</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpTenSanPham" placeholder="Tên sản phẩm">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpGiaNhapHang">Giá nhập</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpGiaNhapHang" placeholder="Giá nhập sản phẩm">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpGiaBan">Giá bán</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpGiaBan" placeholder="Giá bán sản phẩm">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpSoLuongKho">Tồn kho</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpSoLuongKho" placeholder="Tồn kho">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpLoaiSanPham">Loại sản phẩm</label>
+                                <select id="inpLoaiSanPham" class="custom-select">
+                                    <option selected>Chọn loại sản phẩm</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="inpHangSanXuat">Hãng sản xuất</label>
+                                <select id="inpHangSanXuat" class="custom-select">
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                        <form>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpManHinh">Màn hình</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpManHinh" placeholder="Màn hình">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpHeDieuHanh">Hệ điều hành</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpHeDieuHanh" placeholder="Hệ điều hành">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpCameraTruoc">Camera trước</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpCameraTruoc" placeholder="Camera trước">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpCameraSau">Camera sau</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpCameraSau" placeholder="Camera sau">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpCPU">Chip xử lý</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpCPU" placeholder="Chip xử lý">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpGPU">Chip đồ họa</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpGPU" placeholder="Chip đồ họa">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpPin">Pin</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpPin" placeholder="Pin">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpSim">Thẻ SIM</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpSim" placeholder="Thẻ SIM">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpRAM">Ram</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpRAM" placeholder="Ram">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpROM">Bộ nhớ trong</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpROM" placeholder="Bộ nhớ trong">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="images" role="tabpanel" aria-labelledby="images-tab">
+                        <div class="mb-2">Hình đại diện sản phẩm</div>
+                        <div id="imgDaiDien">
+                            <span class="btn-upload">
+                                <button>+</button>
+                                <input type="file" title="Thêm hình ảnh" accept="image/*" onchange="handleLoadFile(event, true, true)" />
+                            </span>
+                        </div>
+                        <hr />
+                        <div class="mb-2">Tất cả hình ảnh</div>
+                        <div id="all-img">
+                            <span class="btn-upload">
+                                <button>+</button>
+                                <input type="file" title="Thêm hình ảnh" accept="image/*" onchange="handleLoadFile(event, true, false)"/>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="promotions" role="tabpanel" aria-labelledby="promotions-tab">
+                        <form>
+                            <div class="custom-control custom-switch no-select pb-2">
+                                <input type="checkbox" class="custom-control-input" id="swPromo" onchange="handleOnChangeSwPromo(this.checked, false)">
+                                <label class="custom-control-label" for="swPromo">Khuyến mãi</label>
+                            </div>
+                            <div class="form-group" id="inpPromo">
+                                <label for="inpSoTienGiam">Số tiền giảm</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpSoTienGiam" placeholder="Số tiền giảm">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-warning" onclick="capNhatSanPham()">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalThemSanPham" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#infoAdd" role="tab" aria-controls="infoAdd" aria-selected="true">Thông tin sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#specificationsAdd" role="tab" aria-controls="profileAdd" aria-selected="false">Cấu hình</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#promotionsAdd" role="tab" aria-controls="imagesAdd" aria-selected="false">Khuyến mãi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#imagesAdd" role="tab" aria-controls="imagesAdd" aria-selected="false">Hình ảnh</a>
+                    </li>
+                </ul>
+                <div class="tab-content border p-3" id="myTabContent">
+                    <div class="tab-pane fade show active" id="infoAdd" role="tabpanel" aria-labelledby="info-tab">
+                        <form>
+                            <div class="custom-control custom-switch no-select pb-2 d-flex justify-content-end">
+                                <input type="checkbox" class="custom-control-input" id="swHomeAdd">
+                                <label class="custom-control-label" for="swHomeAdd">Hiển thị trang chủ</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="inpTenSanPhamAdd">Tên sản phẩm</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpTenSanPhamAdd" placeholder="Tên sản phẩm">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpGiaNhapHangAdd">Giá nhập</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpGiaNhapHangAdd" placeholder="Giá nhập sản phẩm">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpGiaBanAdd">Giá bán</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpGiaBanAdd" placeholder="Giá bán sản phẩm">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpSoLuongKhoAdd">Tồn kho</label>
+                                <input type="text" autocomplete="off" class="form-control" id="inpSoLuongKhoAdd" placeholder="Tồn kho">
+                            </div>
+                            <div class="form-group">
+                                <label for="inpLoaiSanPhamAdd">Loại sản phẩm</label>
+                                <select id="inpLoaiSanPhamAdd" class="custom-select">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="inpHangSanXuatAdd">Hãng sản xuất</label>
+                                <select id="inpHangSanXuatAdd" class="custom-select">
+                                </select>
+                            </div>
+                    </form>
+                </div>
+                    <div class="tab-pane fade" id="specificationsAdd" role="tabpanel" aria-labelledby="specifications-tab">
+                        <form>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpManHinh">Màn hình</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpManHinhAdd" placeholder="Màn hình">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpHeDieuHanh">Hệ điều hành</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpHeDieuHanhAdd" placeholder="Hệ điều hành">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpCameraTruoc">Camera trước</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpCameraTruocAdd" placeholder="Camera trước">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpCameraSau">Camera sau</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpCameraSauAdd" placeholder="Camera sau">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpCPU">Chip xử lý</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpCPUAdd" placeholder="Chip xử lý">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpGPU">Chip đồ họa</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpGPUAdd" placeholder="Chip đồ họa">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpPin">Pin</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpPinAdd" placeholder="Pin">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpSim">Thẻ SIM</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpSimAdd" placeholder="Thẻ SIM">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpRAM">Ram</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpRAMAdd" placeholder="Ram">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="inpROM">Bộ nhớ trong</label>
+                                    <input type="text" autocomplete="off" class="form-control" id="inpROMAdd" placeholder="Bộ nhớ trong">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="imagesAdd" role="tabpanel" aria-labelledby="images-tab">
+                        <div class="mb-2">Hình đại diện sản phẩm</div>
+                        <div id="imgDaiDienAdd">
+                            <span class="btn-upload">
+                                <button>+</button>
+                                <input type="file" title="Thêm hình ảnh" accept="image/*" onchange="handleLoadFile(event, false, true)" />
+                            </span>
+                        </div>
+                        <hr />
+                        <div class="mb-2">Tất cả hình ảnh</div>
+                        <div id="all-img-add">
+                            <span class="btn-upload">
+                                <button>+</button>
+                                <input type="file" title="Thêm hình ảnh" accept="image/*" onchange="handleLoadFile(event, false, false)"/>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="promotionsAdd" role="tabpanel" aria-labelledby="promotions-tab">
+                        <form>
+                            <div class="custom-control custom-switch no-select pb-2">
+                                <input type="checkbox" class="custom-control-input" id="swPromoAdd" onchange="handleOnChangeSwPromo(this.checked, true)">
+                                <label class="custom-control-label" for="swPromoAdd">Khuyến mãi</label>
+                            </div>
+                            <div class="form-group" id="inpPromoAdd">
+                                <input type="text" autocomplete="off" class="form-control" id="inpSoTienGiamAdd" placeholder="Số tiền giảm">
+                                <label for="inpSoTienGiamAdd">Số tiền giảm</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" onclick="themSanPham()">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="deleteConfirm" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xóa sản phẩm?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="deleteSanPham()">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var idSanPhamDelete = null;
+    var idSanPhamUpdate = null;
+    var listHinhAnhSanPham = [];
+    var daCoHinhDaiDien = false;
+
+    function toggleHienThiTrangChu(id) {
+        $.post('@Url.Action("ToggleHienThiTrangChu")', { sanPhamId: id });
+        let btnToggleHome = $("tr#" + id + " #btnToggleHome" + id + " button");
+
+        if (btnToggleHome.hasClass("btn-primary")) {
+            btnToggleHome.removeClass("btn-primary");
+            btnToggleHome.addClass("btn-secondary");
+        } else {
+            btnToggleHome.removeClass("btn-secondary");
+            btnToggleHome.addClass("btn-primary");
+        }
+    }
+    function loadSanPham(id) {
+        idSanPhamUpdate = id;
+        $.post("/admin/getsanphamupdate", { sanPhamId: id }, function (response) {
+            let sanPham = JSON.parse(response);
+
+            $("#inpTenSanPham").val(sanPham.TenSanPham);
+            $("#inpGiaNhapHang").val(formatNumber(sanPham.GiaNhapHang));
+            $("#inpGiaBan").val(formatNumber(sanPham.GiaBan));
+            $("#inpSoLuongKho").val(formatNumber(sanPham.SoLuongKho));
+
+            if (sanPham.HienThiTrangChu)
+                $("#swHome").prop("checked", true);
+            else
+                $("#swHome").prop("checked", false);
+
+            let cauHinhSanPham = sanPham.CauHinhSanPham;
+
+            $("#inpManHinh").val(cauHinhSanPham.ManHinh);
+            $("#inpHeDieuHanh").val(cauHinhSanPham.HeDieuHanh);
+            $("#inpCameraTruoc").val(cauHinhSanPham.CameraTruoc);
+            $("#inpCameraSau").val(cauHinhSanPham.CameraSau);
+            $("#inpCPU").val(cauHinhSanPham.CPU);
+            $("#inpGPU").val(cauHinhSanPham.GPU);
+            $("#inpPin").val(cauHinhSanPham.Pin);
+            $("#inpSim").val(cauHinhSanPham.Sim);
+            $("#inpRAM").val(cauHinhSanPham.RAM);
+            $("#inpROM").val(cauHinhSanPham.ROM);
+
+            if (sanPham.KhuyenMai !== null) {
+                $("#swPromo").prop("checked", true);
+                $("#inpSoTienGiam").val(formatNumber(sanPham.KhuyenMai.SoTienGiam));
+                $("#inpPromo").removeClass("hide");
+            }
+            else {
+                $("#swPromo").prop("checked", false);
+                $("#inpSoTienGiam").val("");
+                $("#inpPromo").addClass("hide");
+            }
+
+            listHinhAnhSanPham = sanPham.ListHinhAnhSanPham.map((hasp, idx) => {
+                let filename = hasp.ImagePath.split("/")[1];
+                let data = "/content/" + hasp.ImagePath;
+                let hinhDaiDien;
+                if (sanPham.ImgDaiDien === hasp.ImagePath)
+                    hinhDaiDien = true;
+                filename = /^([0-9])+_.*/.test(filename) ? filename.split("_")[1] : filename;
+
+                return {    
+                    filename,
+                    data,
+                    hinhDaiDien,
+                    id: idx
+                }
+            });
+
+            updateFormUploadHinhAnh();
+            
+            $("#inpLoaiSanPham").html("");
+            $("#inpLoaiSanPham").append(`<option ${sanPham.LoaiSanPhamId !== null ? "" : "selected"}>Chọn loại sản phẩm</option>`);
+            loadLoaiSanPham()
+                .then(listLoaiSanPham => {
+                    listLoaiSanPham.forEach(loaiSanPham => {
+                        $("#inpLoaiSanPham").append(`<option ${sanPham.LoaiSanPhamId === loaiSanPham.LoaiSanPhamId ? "selected" : ""} value="${loaiSanPham.LoaiSanPhamId}">${loaiSanPham.TenLoaiSanPham}</option>`);
+                    });
+                });
+            
+            $("#inpHangSanXuat").html("");
+            $("#inpHangSanXuat").append(`<option ${sanPham.HangSanXuatId !== null ? "" : "selected"}>Chọn hãng sản xuất</option>`);
+            loadHangSanXuat()
+                .then(listHangSanXuat => {
+                    listHangSanXuat.forEach(hangSanXuat => {
+                        $("#inpHangSanXuat").append(`<option ${sanPham.HangSanXuatId === hangSanXuat.HangSanXuatId ? "selected" : ""} value="${hangSanXuat.HangSanXuatId}">${hangSanXuat.TenHangSanXuat}</option>`);
+                    });
+                });
+        });
+    }
+
+    function formatNumber(number) {
+        let str = (number + "")
+        .split("")
+        .reverse()
+        .join("");
+        let arr = [];
+
+        for (let i = 0; i < str.length; i += 3) {
+            arr.push(str.substr(i, 3));
+        }
+
+        return arr
+            .join(".")
+            .split("")
+            .reverse()
+            .join("");
+    }
+
+    function getNumber(str) {
+        return str.split(".").join("");
+    }
+
+    function handleOnChangeSwPromo(checked, isAdd) {
+        let id = isAdd ? "#inpPromoAdd" : "#inpPromo";
+        if (checked)
+            $(id).removeClass("hide");
+        else
+            $(id).addClass("hide");
+    }
+
+    function deleteSanPham() {
+        $("#deleteConfirm").modal("toggle");
+        $.post("/admin/deletesanpham", {idSanPham: idSanPhamDelete}, function(response) {
+            if (!response.error) {
+                $("tr#" + idSanPhamDelete).remove();
+            }
+        });
+    }
+
+    function clearModal() {
+        $("#inpTenSanPhamAdd").val("");
+        $("#inpGiaNhapHangAdd").val(formatNumber(""));
+        $("#inpGiaBanAdd").val(formatNumber(""));
+        $("#inpSoLuongKhoAdd").val(formatNumber(""));
+        $("#inpManHinhAdd").val("");
+        $("#inpHeDieuHanhAdd").val("");
+        $("#inpCameraTruocAdd").val("");
+        $("#inpCameraSauAdd").val("");
+        $("#inpCPUAdd").val("");
+        $("#inpGPUAdd").val("");
+        $("#inpPinAdd").val("");
+        $("#inpSimAdd").val("");
+        $("#inpRAMAdd").val("");
+        $("#inpROMAdd").val("");
+        $("#swPromoAdd").prop("checked", false);
+        $("#inpSoTienGiamAdd").val("");
+        $("#inpPromoAdd").addClass("hide");
+        $("#swHomeAdd").prop("checked", false);
+
+        $("#inpLoaiSanPhamAdd").html("");
+        $("#inpLoaiSanPhamAdd").append("<option selected>Chọn loại sản phẩm</option>");
+        loadLoaiSanPham()
+            .then(listLoaiSanPham => {
+                listLoaiSanPham.forEach(loaiSanPham => {
+                    $("#inpLoaiSanPhamAdd").append(`<option value="${loaiSanPham.LoaiSanPhamId}">${loaiSanPham.TenLoaiSanPham}</option>`);
+                });
+            });
+
+        $("#inpHangSanXuatAdd").html("");
+        $("#inpHangSanXuatAdd").append("<option selected>Chọn hãng sản xuất</option>");
+        loadHangSanXuat()
+            .then(listHangSanXuat => {
+                listHangSanXuat.forEach(hangSanXuat => {
+                    $("#inpHangSanXuatAdd").append(`<option value="${hangSanXuat.HangSanXuatId}">${hangSanXuat.TenHangSanXuat}</option>`);
+                });
+            });
+
+        let btnUpload = '<span class="btn-upload"><button>+</button><input type="file" title="Thêm hình ảnh"  accept="image/*" onchange="handleLoadFile(event, false, true)"/></span>';              
+        $("#imgDaiDienAdd").html(btnUpload);
+        btnUpload = '<span class="btn-upload"><button>+</button><input type="file" title="Thêm hình ảnh"  accept="image/*" onchange="handleLoadFile(event, false, false)"/></span>';
+        $("#all-img-add").html(btnUpload);
+        listHinhAnhSanPham = [];
+    }
+
+    function themSanPham() {
+        let sanPham = {};
+
+        // SanPham
+        sanPham.TenSanPham = $("#inpTenSanPhamAdd").val();
+        sanPham.GiaNhapHang = +getNumber($("#inpGiaNhapHangAdd").val());
+        sanPham.GiaBan = +getNumber($("#inpGiaBanAdd").val());
+        sanPham.HienThiTrangChu = $("#swHomeAdd").is(":checked");
+        sanPham.SoLuongKho = +getNumber($("#inpSoLuongKhoAdd").val());
+        sanPham.IdLoaiSanPham = $("#inpLoaiSanPhamAdd").val() !== null ? +$("#inpLoaiSanPhamAdd").val() : null;
+        sanPham.IdHangSanXuat = $("#inpHangSanXuatAdd").val() !== null ? +$("#inpHangSanXuatAdd").val() : null;
+        
+        // CauHinhSanPham
+        sanPham.CauHinhSanPham = {};
+        sanPham.CauHinhSanPham.ManHinh = $("#inpManHinhAdd").val();
+        sanPham.CauHinhSanPham.HeDieuHanh = $("#inpHeDieuHanhAdd").val();
+        sanPham.CauHinhSanPham.CameraTruoc = $("#inpCameraTruocAdd").val();
+        sanPham.CauHinhSanPham.CameraSau = $("#inpCameraSauAdd").val();
+        sanPham.CauHinhSanPham.Sim = $("#inpSimAdd").val();
+        sanPham.CauHinhSanPham.Pin = $("#inpPinAdd").val();
+        sanPham.CauHinhSanPham.CPU = $("#inpCPUAdd").val();
+        sanPham.CauHinhSanPham.GPU = $("#inpGPUAdd").val();
+        sanPham.CauHinhSanPham.RAM = $("#inpRAMAdd").val();
+        sanPham.CauHinhSanPham.ROM = $("#inpROMAdd").val();
+
+        // KhuyenMai
+        if ($("#swPromoAdd").is(":checked")) {
+            sanPham.KhuyenMai = {};
+            sanPham.KhuyenMai.SoTienGiam = +getNumber($("#inpSoTienGiamAdd").val());
+        } else {
+            sanPham.KhuyenMai = null;
+        }
+
+        // HinhAnhSanPham
+        let hinhDaiDien = listHinhAnhSanPham.find(ha => ha.hinhDaiDien !== undefined);
+        if (hinhDaiDien !== null && hinhDaiDien !== undefined)
+            sanPham.HinhDaiDien = "images/" + hinhDaiDien.filename;
+        sanPham.ListHinhAnhSanPham = listHinhAnhSanPham;
+        
+        $.post("/admin/themsanpham", {json: JSON.stringify(sanPham)}, function(response) {
+            $("#modalThemSanPham").modal("toggle");
+            location.reload();
+        });
+    }
+
+    function capNhatSanPham() {
+        let sanPham = {};
+
+        // SanPham
+        sanPham.IdSanPham = idSanPhamUpdate;
+        sanPham.TenSanPham = $("#inpTenSanPham").val();
+        sanPham.GiaNhapHang = +getNumber($("#inpGiaNhapHang").val());
+        sanPham.GiaBan = +getNumber($("#inpGiaBan").val());
+        sanPham.HienThiTrangChu = $("#swHome").is(":checked");
+        sanPham.SoLuongKho = +getNumber($("#inpSoLuongKho").val());
+        sanPham.IdLoaiSanPham = $("#inpLoaiSanPham").val() !== null ? +$("#inpLoaiSanPham").val() : null;
+        sanPham.IdHangSanXuat = $("#inpHangSanXuat").val() !== null ? +$("#inpHangSanXuat").val() : null;
+
+        // CauHinhSanPham
+        sanPham.CauHinhSanPham = {};
+        sanPham.CauHinhSanPham.ManHinh = $("#inpManHinh").val();
+        sanPham.CauHinhSanPham.HeDieuHanh = $("#inpHeDieuHanh").val();
+        sanPham.CauHinhSanPham.CameraTruoc = $("#inpCameraTruoc").val();
+        sanPham.CauHinhSanPham.CameraSau = $("#inpCameraSau").val();
+        sanPham.CauHinhSanPham.Sim = $("#inpSim").val();
+        sanPham.CauHinhSanPham.Pin = $("#inpPin").val();
+        sanPham.CauHinhSanPham.CPU = $("#inpCPU").val();
+        sanPham.CauHinhSanPham.GPU = $("#inpGPU").val();
+        sanPham.CauHinhSanPham.RAM = $("#inpRAM").val();
+        sanPham.CauHinhSanPham.ROM = $("#inpROM").val();
+        
+        // KhuyenMai
+        if ($("#swPromo").is(":checked")) {
+            sanPham.KhuyenMai = {};
+            sanPham.KhuyenMai.SoTienGiam = +getNumber($("#inpSoTienGiam").val());
+        } else {
+            sanPham.KhuyenMai = null;
+        }
+
+        // HinhAnhSanPham
+        let hinhDaiDien = listHinhAnhSanPham.find(ha => ha.hinhDaiDien !== undefined);
+        if (hinhDaiDien !== null && hinhDaiDien !== undefined)
+            sanPham.HinhDaiDien = "images/" + hinhDaiDien.filename;
+        sanPham.ListHinhAnhSanPham = listHinhAnhSanPham;
+        
+        $.post("/admin/capnhatsanpham", {json: JSON.stringify(sanPham)}, function(response) {
+            $("#modalCapNhatSanPham").modal("toggle");
+            location.reload();
+        });
+    }
+
+    function loadHangSanXuat() {
+        return fetch("/admin/gethangsanxuat")
+            .then(response => response.json())
+            .then(docs => JSON.parse(docs));
+    }
+
+    function loadLoaiSanPham() {
+        return fetch("/admin/getloaisanpham")
+            .then(response => response.json())
+            .then(docs => JSON.parse(docs));
+    }
+
+    function handleLoadFile(e, isUpdate, isAvt) {
+        let reader = new FileReader();
+        reader.onload = function() {
+            if (e.target.files.length === 0)
+                return;
+            let imageObj = {};
+            imageObj.data = reader.result;
+            imageObj.filename = e.target.files[0].name;
+            imageObj.id = listHinhAnhSanPham.length === 0 ? 1 : listHinhAnhSanPham[listHinhAnhSanPham.length - 1].id + 1;
+            
+            if (isAvt)
+                imageObj.hinhDaiDien = true;
+
+            let i = listHinhAnhSanPham.findIndex(ha => ha.filename === imageObj.filename);
+                
+            if (i >= 0)
+                listHinhAnhSanPham[i] = imageObj;
+            else
+                listHinhAnhSanPham.push(imageObj);
+                
+            if (!isUpdate)
+                updateFormUploadHinhAnhAdd();
+            else
+                updateFormUploadHinhAnh();
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+
+    function updateFormUploadHinhAnhAdd() {
+        daCoHinhDaiDien = false;
+        const btnUpload = `<span class="btn-upload"><button>+</button><input type="file" title="Thêm hình ảnh"  accept="image/*" onchange="handleLoadFile(event, false, false)"/></span>`;
+
+        $("#imgDaiDienAdd").html("");
+        $("#all-img-add").html("");
+
+        listHinhAnhSanPham.forEach(ha => {
+            let image = `<image width=150 height=150 src="${ha.data}" />`;
+
+            if (ha.hinhDaiDien === true) {
+                $("#imgDaiDienAdd").html("");
+                let span = document.createElement("span");
+                span.innerHTML = `<button onclick="removeImageUploaded(${ha.id}, false)">x</button>` + image;
+                span.className = "image-upload-container";
+                $("#imgDaiDienAdd").append(span);
+                daCoHinhDaiDien = true;
+            }
+
+            let span = document.createElement("span");
+            span.innerHTML = `<button onclick="removeImageUploaded(${ha.id}, false)">x</button>` + image;
+            span.className = "image-upload-container";
+            
+            $("#all-img-add").append(span);               
+        });
+
+        if (!daCoHinhDaiDien)
+            $("#imgDaiDienAdd").append(`<span class="btn-upload"><button>+</button><input type="file" title="Thêm hình ảnh" accept="image/*" onchange="handleLoadFile(event, false, true)"/></span>`);
+        $("#all-img-add").append(btnUpload);
+    }
+
+    function updateFormUploadHinhAnh() {
+        daCoHinhDaiDien = false;
+        const btnUpload = `<span class="btn-upload"><button>+</button><input type="file" title="Thêm hình ảnh"  accept="image/*" onchange="handleLoadFile(event, true,false)"/></span>`;
+
+        $("#imgDaiDien").html("");
+        $("#all-img").html("");
+
+        listHinhAnhSanPham.forEach(ha => {
+            let image = `<image width=150 height=150 src="${ha.data}" />`;
+
+            if (ha.hinhDaiDien !== undefined) {
+                $("#imgDaiDien").html("");
+                let span = document.createElement("span");
+                span.innerHTML = `<button onclick="removeImageUploaded(${ha.id}, true)">x</button>` + image;
+                span.className = "image-upload-container";
+                $("#imgDaiDien").append(span);
+                daCoHinhDaiDien = true;
+            }
+
+            let span = document.createElement("span");
+            span.innerHTML = `<button onclick="removeImageUploaded(${ha.id}, true)">x</button>` + image;
+            span.className = "image-upload-container";
+            
+            $("#all-img").append(span);                
+        });
+
+        if (!daCoHinhDaiDien)
+            $("#imgDaiDien").append(`<span class="btn-upload"><button>+</button><input type="file" title="Thêm hình ảnh" accept="image/*" onchange="handleLoadFile(event, true, true)"/></span>`);
+        $("#all-img").append(btnUpload);
+    }
+
+    function removeImageUploaded(id, isUpdate) {
+        listHinhAnhSanPham = listHinhAnhSanPham.filter(ha => ha.id !== id);
+
+        if (!isUpdate)
+                updateFormUploadHinhAnhAdd();
+            else
+                updateFormUploadHinhAnh();
+    }
+</script>

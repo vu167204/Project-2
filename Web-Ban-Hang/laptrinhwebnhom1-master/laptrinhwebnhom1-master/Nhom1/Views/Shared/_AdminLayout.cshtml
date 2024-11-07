@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="~/Content/all.css" rel="stylesheet" />
+    <link rel="icon" href="~/Content/images/logo.png" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <link href="~/Content/sweetalert2.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+                <!-- Sidebar - Brand -->
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/admin">
+                    <img src="/Content/images/logo.png" style="height: auto; width: 80%"/>
+                </a>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider my-0">
+
+                <!-- Nav Item - Dashboard -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Quản lý
+                </div>
+
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin/quanlysanpham">
+                        <i class="fas fa-fw fa-mobile"></i>
+                        <span>Sản phẩm</span>
+                    </a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin/quanlydonhang">
+                        <i class="fas fa-fw fa-receipt"></i>
+                        @{
+                            var soDonHangMoi = ViewBag.SoDonHangMoi > 0 ? ViewBag.SoDonHangMoi.ToString() + " đơn mới" : "";
+                        }
+                        <span>Đơn hàng @if (soDonHangMoi != "") {<span class="badge badge-sm badge-success">@soDonHangMoi</span>}</span>
+                    </a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin/quanlytaikhoan">
+                        <i class="fas fa-fw fa-user"></i>
+                        <span>Tài khoản admin</span>
+                    </a>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Tài khoản
+                </div>
+
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item active">
+                    <a class="nav-link collapsed" href="/admin/dangxuat">
+                        <i class="fas fa-fw fa-sign-out-alt"></i>
+                        <span>Đăng xuất</span>
+                    </a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin/doimatkhau">
+                        <i class="fas fa-fw fa-lock"></i>
+                        <span>Đổi mật khẩu</span>
+                    </a>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider d-none d-md-block">
+
+                <!-- Sidebar Toggler (Sidebar) -->
+                <div class="text-center d-none d-md-inline">
+                    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </div>
+
+            </ul>
+
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid pt-3">
+                        @RenderBody()
+
+                    </div>
+                    <!-- /.container-fluid -->
+        </div>
+    </div>
+    <script src="~/Scripts/popper.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/sb-admin-2.min.js"></script>
+            <script src="~/Scripts/sweetalert2.all.min.js"></script>
+</body>
+</html>

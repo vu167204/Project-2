@@ -1,0 +1,100 @@
+﻿@using Nhom1.Models
+@using Nhom1.Helpers
+
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    var sanPham = (SanPham)ViewData["SanPham"];
+}
+
+
+<div class="product-detail">
+    <div class="container">
+        <div class="product-detail-left">
+            <div class="sp-wrap">
+                @foreach (var hasp in sanPham.ListHinhAnhSanPham)
+                {
+                <a href="~/Content/@hasp.ImagePath">
+                    <img src="~/Content/@hasp.ImagePath" />
+                </a>
+                }
+            </div>
+        </div>
+        <div class="product-detail-right">
+            <h3 class="mb-4"><b>@sanPham.TenSanPham</b></h3>
+            @{
+                var gia = sanPham.KhuyenMai != null ? sanPham.GiaBan - sanPham.KhuyenMai.SoTienGiam : sanPham.GiaBan;
+                var strGia = AppHelper.FormatMoney(gia);
+             }
+            <h5><b>Giá: </b>@strGia</h5>
+            @{
+                var tenHangSanXuat = sanPham.HangSanXuat.TenHangSanXuat;
+            }
+            <h5><b>Nhà sản xuất: </b>@tenHangSanXuat</h5>
+            <h5><b>Bảo hành: </b>12 Năm</h5>
+            <h5><b>Giao hàng: </b>Xuyên lục địa miễn phí</h5>
+
+            <a href="/donhang?idSanPham=@sanPham.SanPhamId" class="buy">
+                <div>
+                    <div>
+                        <span>Mua Lẹ</span>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <span><i class="fas fa-shopping-cart"></i></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="product-detail-parameter">
+            <h3><b>Thông số kỹ thuật</b></h3>
+            @{
+                var manHinh = "";
+                var heDieuHanh = "";
+                var cameraTruoc = "";
+                var cameraSau = "";
+                var sim = "";
+                var pin = "";
+                var cpu = "";
+                var gpu = "";
+                var ram = "";
+                var rom = "";
+                
+                if (sanPham.CauHinhSanPham != null)
+                {
+                    manHinh = sanPham.CauHinhSanPham.ManHinh.Trim();
+                    heDieuHanh = sanPham.CauHinhSanPham.HeDieuHanh.Trim();
+                    cameraTruoc = sanPham.CauHinhSanPham.CameraTruoc.Trim();
+                    cameraSau = sanPham.CauHinhSanPham.CameraSau.Trim();
+                    sim = sanPham.CauHinhSanPham.Sim.Trim();
+                    pin = sanPham.CauHinhSanPham.Pin.Trim();
+                    cpu = sanPham.CauHinhSanPham.CPU.Trim();
+                    gpu = sanPham.CauHinhSanPham.GPU.Trim();
+                    ram = sanPham.CauHinhSanPham.RAM.Trim();
+                    rom = sanPham.CauHinhSanPham.ROM.Trim();
+                }
+                
+                manHinh = manHinh != "" ? manHinh : "Chưa cập nhật";
+                heDieuHanh = heDieuHanh != "" ? heDieuHanh : "Chưa cập nhật";
+                cameraTruoc = cameraTruoc != "" ? cameraTruoc : "Chưa cập nhật";
+                cameraSau = cameraSau != "" ? cameraSau : "Chưa cập nhật";
+                sim = sim != "" ? sim : "Chưa cập nhật";
+                pin = pin != "" ? pin : "Chưa cập nhật";
+                cpu = cpu != "" ? cpu : "Chưa cập nhật";
+                gpu = gpu != "" ? gpu : "Chưa cập nhật";
+                ram = ram != "" ? ram : "Chưa cập nhật";
+                rom = rom != "" ? rom : "Chưa cập nhật";
+            }
+            <p><b>Màn hình:</b> @manHinh</p>
+            <p><b>Hệ điều hành:</b> @heDieuHanh</p>
+            <p><b>Camera sau:</b>	@cameraSau</p>
+            <p><b>Camera trước:</b> @cameraTruoc</p>
+            <p><b>CPU:</b>	@cpu</p>
+            <p><b>GPU:</b>	@gpu</p>
+            <p><b>RAM:</b>	@ram</p>
+            <p><b>Bộ nhớ trong:</b> @rom</p>
+            <p><b>Thẻ SIM:</b> @sim</p>
+            <p><b>Pin:</b> @pin</p>
+        </div>
+    </div>
+</div>

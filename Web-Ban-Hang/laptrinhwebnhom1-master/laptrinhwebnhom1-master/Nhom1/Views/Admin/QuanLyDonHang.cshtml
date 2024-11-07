@@ -1,0 +1,181 @@
+﻿@using Nhom1.Models;
+@using Nhom1.Helpers;
+
+@{
+    ViewBag.Title = "QuanLyDonHang";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var listDonHangMoi = (List<DonHang>)ViewData["DonHangMoi"];
+    var listDonHangDangGiao = (List<DonHang>)ViewData["DonHangDangGiao"];
+    var listDonHangDaThanhToan = (List<DonHang>)ViewData["DonHangDaThanhToan"];
+}
+
+<h2 class="text-center">Quản lý đơn hàng</h2>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#new" role="tab" aria-controls="new" aria-selected="true">Mới (@listDonHangMoi.Count)</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#shipping" role="tab" aria-controls="shipping" aria-selected="false">Đang giao hàng (@listDonHangDangGiao.Count)</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#paid" role="tab" aria-controls="paid" aria-selected="false">Đã thanh toán</a>
+    </li>
+</ul>
+
+<div class="tab-content border p-3" id="myTabContent">
+
+    <!-- Start - Đơn hàng mới -->
+    <div class="tab-pane fade show active" id="new" role="tabpanel" aria-labelledby="new-tab">
+        @if (listDonHangMoi.Count == 0)
+        {
+            <div class="alert alert-info text-center h3">Không có đơn hàng mới</div>
+        }
+        @if (listDonHangMoi.Count > 0)
+        {
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Giảm giá</th>
+                        <th>Thành tiền</th>
+                        <th>Giao hàng</th>
+                        <th>Xóa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var dhm in listDonHangMoi)
+                    {
+                        <tr>
+                            <td>@dhm.DonHangId</td>
+                            <td>@dhm.SanPham.TenSanPham</td>
+                            @{
+                        var giaBan = AppHelper.FormatMoney(dhm.GiaBan);
+                        var giamGia = AppHelper.FormatMoney(dhm.GiamGia);
+                        var thanhTien = AppHelper.FormatMoney(dhm.GiaBan - dhm.GiamGia);
+                            }
+                            <td>@giaBan</td>
+                            <td>@giamGia</td>
+                            <td>@thanhTien</td>
+                            <td>
+                                <button class="btn btn-primary" onclick="capNhatTrangThaiDonHang(@dhm.DonHangId, 'Đang giao hàng')"><i class="fa fa-shipping-fast"></i></button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" onclick="xoaDonHang(@dhm.DonHangId)"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <!-- End - Đơn hàng mới -->
+    <!-- Start - Đơn hàng đang giao -->
+    <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
+        @if (listDonHangDangGiao.Count == 0)
+        {
+            <div class="alert alert-info text-center h3">Không có đơn đang giao</div>
+        }
+        @if (listDonHangDangGiao.Count > 0)
+        {
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Giảm giá</th>
+                        <th>Thành tiền</th>
+                        <th>Đã thanh toán</th>
+                        <th>Ngừng giao hàng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var dhdg in listDonHangDangGiao)
+                    {
+                        <tr>
+                            <td>@dhdg.DonHangId</td>
+                            <td>@dhdg.SanPham.TenSanPham</td>
+                            @{
+                        var giaBan = AppHelper.FormatMoney(dhdg.GiaBan);
+                        var giamGia = AppHelper.FormatMoney(dhdg.GiamGia);
+                        var thanhTien = AppHelper.FormatMoney(dhdg.GiaBan - dhdg.GiamGia);
+                            }
+                            <td>@giaBan</td>
+                            <td>@giamGia</td>
+                            <td>@thanhTien</td>
+                            <td>
+                                <button class="btn btn-primary" onclick="capNhatTrangThaiDonHang(@dhdg.DonHangId, 'Đã thanh toán')"><i class="fa fa-money-bill-alt"></i></button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" onclick="capNhatTrangThaiDonHang(@dhdg.DonHangId, 'Mới')"><i class="fa fa-angry"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <!-- End - Đơn hàng đang giao -->
+    <!-- Start - Đơn hàng đã thanh toán -->
+    <div class="tab-pane fade" id="paid" role="tabpanel" aria-labelledby="paid-tab">
+        @if (listDonHangDaThanhToan.Count == 0)
+        {
+            <div class="alert alert-info text-center h3">Không có đơn đã thanh toán</div>
+        }
+        @if (listDonHangDaThanhToan.Count > 0)
+        {
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Giảm giá</th>
+                        <th>Thành tiền</th>
+                        <th>Ngày thanh toán</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var dhdtt in listDonHangDaThanhToan)
+                    {
+                        <tr>
+                            <td>@dhdtt.DonHangId</td>
+                            <td>@dhdtt.SanPham.TenSanPham</td>
+                            @{
+                        var giaBan = AppHelper.FormatMoney(dhdtt.GiaBan);
+                        var giamGia = AppHelper.FormatMoney(dhdtt.GiamGia);
+                        var thanhTien = AppHelper.FormatMoney(dhdtt.GiaBan - dhdtt.GiamGia);
+                            }
+                            <td>@giaBan</td>
+                            <td>@giamGia</td>
+                            <td>@thanhTien</td>
+                            <td>@dhdtt.NgayThanhToan</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <!-- End - Đơn hàng đã thanh toán -->
+
+</div>
+
+<script>
+    function capNhatTrangThaiDonHang(idDonHang, trangThai) {
+        $.post("/admin/capnhattrangthaidonhang", {idDonHang, trangThai}, function(response) {
+            if (!response.error)
+                location.reload();
+        });
+    }
+
+    function xoaDonHang(idDonHang) {
+        $.post("/admin/xoadonhang", {idDonHang}, function(response) {
+            console.log(response);
+            if (!response.error)
+                location.reload();
+        });
+    }
+</script>

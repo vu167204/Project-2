@@ -1,0 +1,259 @@
+﻿@using Nhom1.Helpers;
+
+@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var month = ViewBag.Month;
+    var year = ViewBag.Year;
+    var loiNhuanThang = ViewBag.loiNhuanThang == null ? 0 : ViewBag.loiNhuanThang;
+    var loiNhuanNam = ViewBag.loiNhuanNam;
+    var soDonHangThang = ViewBag.SoDonHangThang;
+    var soDonHangNam = ViewBag.SoDonHangNam;
+    ViewBag.SoDonHangMoi = ViewBag.SoDonHangMoi;
+}
+<link href="~/Content/mdDateTimePicker.min.css" rel="stylesheet" />
+<link href="~/Content/Chart.css" rel="stylesheet" />
+<script src="/scripts/moment.min.js"></script>
+<script src="/scripts/scroll-into-view-if-needed.min.js"></script>
+<script src="/scripts/custom-event-polyfill.js"></script>
+<script src="/scripts/draggabilly.pkgd.min.js"></script>
+<script src="/scripts/mdDateTimePicker.js"></script>
+<script src="/scripts/Chart.js"></script>
+
+<h2 class="mb-4 no-select">
+    Thống kê tháng <input id="month" maxlength="2" value="@month" class="width-dynamic" type="text" autocomplete="off" /> năm <input id="year" value="@year" class="width-dynamic" maxlength="4" type="text" autocomplete="off" />
+    <button id="pickTime" onclick="timePicker.toggle()" class="btn btn-outline-success btn-sm"><i class="fa fa-calendar"></i></button>
+    <button onclick="reload()" class="btn btn-outline-primary btn-sm"><i class="fa fa-sync-alt"></i></button>
+</h2>
+
+<h5>Số liệu</h5>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Lợi nhuận (tháng @month)</div>
+                        @{
+                            var dtThang = AppHelper.FormatMoney(loiNhuanThang);
+                        }
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@dtThang (VNĐ)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-coins fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Lợi nhuận (năm @year)</div>
+                        @{
+                            var dtNam = AppHelper.FormatMoney(loiNhuanNam);
+                        }
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@dtNam (VNĐ)</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-gem fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Đã thanh toán (tháng @month)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@soDonHangThang</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-wallet fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Đã thanh toán (năm @year)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@soDonHangNam</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-money-check-alt fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mt-5">Biểu đồ đơn hàng mỗi tháng trong năm @year</h5>
+
+<div class="row mb-4" style="width: 85%; margin: 0px auto">
+    <canvas id="donHangChart"></canvas>
+</div>
+
+<h5 class="mt-5">Biểu đồ lợi nhuận mỗi tháng trong năm @year</h5>
+
+<div class="row mb-4" style="width: 85%; margin: 0px auto">
+    <canvas id="loiNhuanChart"></canvas>
+</div>
+
+<script>
+    var timePicker = new mdDateTimePicker.default({
+        type: "date",
+        orientation: "PORTRAIT"
+    });
+
+    timePicker.trigger = document.getElementById("pickTime");
+
+    document.getElementById("pickTime").addEventListener("onOk", function(e) {
+        const time = timePicker.time._d;
+
+        $("#year").val(time.getFullYear());
+        $("#month").val(time.getMonth());
+
+        reload();
+    });
+
+    function reload() {
+        location.search = "year=" + $("#year").val() + "&month=" + $("#month").val();
+    }
+
+    // Biểu đồ
+
+    var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+    var options = {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        tooltips: {
+            callbacks: {
+                label: function(tooltipItem, chart){
+                    var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                    return datasetLabel + ': ' + number_format(tooltipItem.yLabel, 2);
+                }
+            }
+        }
+    };
+    var backgroundColor = [
+                        'rgba(231, 164, 228, 0.2)',
+                        'rgba(254, 52, 110, 0.2)',
+                        'rgba(255, 197, 92, 0.2)',
+                        'rgba(12, 148, 99, 0.2)',
+                        'rgba(255, 216, 0, 0.2)',
+                        'rgba(239, 67, 57, 0.2)',
+                        'rgba(93, 20, 81, 0.2)',
+                        'rgba(35, 53, 103, 0.2)',
+                        'rgba(66, 184, 131, 0.2)',
+                        'rgba(206, 46, 108, 0.2)',
+                        'rgba(31, 171, 137, 0.2)',
+                        'rgba(153, 46, 36, 0.2)'
+    ];
+    var borderColor = [
+                        'rgba(231, 164, 228, 1)',
+                        'rgba(254, 52, 110, 1)',
+                        'rgba(255, 197, 92, 1)',
+                        'rgba(12, 148, 99, 1)',
+                        'rgba(255, 216, 0, 1)',
+                        'rgba(239, 67, 57, 1)',
+                        'rgba(93, 20, 81, 1)',
+                        'rgba(35, 53, 103, 1)',
+                        'rgba(66, 184, 131, 1)',
+                        'rgba(206, 46, 108, 1)',
+                        'rgba(31, 171, 137, 1)',
+                        'rgba(153, 46, 36, 1)'
+    ];
+    $.post("/admin/getdulieutheonam", {year: $("#year").val()}, function (response) {
+        let donHangTrongNam = response.DonHang;
+        let loiNhuanTrongNam = response.LoiNhuan;
+
+        var ctxDonHang = document.getElementById('donHangChart');
+        var ctxLoiNhuan = document.getElementById('loiNhuanChart');
+
+        var donHangChart = new Chart(ctxDonHang, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Số đơn hàng đã thanh toán',
+                    data: donHangTrongNam,
+                    backgroundColor,
+                    borderColor,
+                    borderWidth: 1
+                }]
+            },
+            options
+            });
+        var loiNhuanChart = new Chart(ctxLoiNhuan, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Lợi nhuận',
+                    data: loiNhuanTrongNam,
+                    backgroundColor,
+                    borderColor,
+                    borderWidth: 1
+                }]
+            },
+            options
+            });
+    });
+
+
+
+    $.fn.textWidth = function (text, font) {
+
+        if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
+
+        $.fn.textWidth.fakeEl.text(text || this.val() || this.text() || this.attr('placeholder')).css('font', font || this.css('font'));
+
+        return $.fn.textWidth.fakeEl.width();
+    };
+
+    $('.width-dynamic').on('input', function () {
+        var inputWidth = $(this).textWidth();
+        $(this).css({
+            width: inputWidth + 9
+        })
+    }).trigger('input');
+
+    function number_format(number, decimals, dec_point, thousands_sep) {
+        // *     example: number_format(1234.56, 2, ',', ' ');
+        // *     return: '1 234,56'
+        number = (number + '').replace('.', '').replace(' ', '');
+        var n = !isFinite(+number) ? 0 : +number,
+                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                sep = (typeof thousands_sep === 'undefined') ? '.' : thousands_sep,
+                dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                s = '',
+                toFixedFix = function (n, prec) {
+                    var k = Math.pow(10, prec);
+                    return '' + Math.round(n * k) / k;
+                };
+        // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+        if (s[0].length > 3) {
+            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+        }
+        return s.join(dec);
+    }
+</script>

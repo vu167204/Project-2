@@ -1,0 +1,130 @@
+﻿@using Nhom1.Models
+@using Nhom1.Helpers
+@{
+    ViewBag.Title = "Trang chủ";
+    var listDienThoai = (List<SanPham>)ViewData["listDienThoai"];
+    var listMayTinhBang = (List<SanPham>)ViewData["listMayTinhBang"];
+}
+
+<div class="container-fluid px-0">
+    <div class="site-slider w-100">
+        <div class="slider-one">
+            <div>
+                <img src="~/Content/images/samsung-logo.svg" class="image-fluid" alt="Banner Samsung" />
+            </div>
+            <div>
+                <img src="~/Content/images/apple-logo.svg" class="image-fluid" alt="Banner Apple" />
+            </div>
+            <div>
+                <img src="~/Content/images/oppo-logo.svg" class="image-fluid" alt="Banner Oppo" />
+            </div>
+            <div>
+                <img src="~/Content/images/huawei-logo.svg" class="image-fluid" alt="Banner Huawei" />
+            </div>
+        </div>
+        <div class="slider-btn">
+            <span class="prev position"><i class="fas fa-chevron-left"></i></span>
+            <span class="next position right"><i class="fas fa-chevron-right"></i></span>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="site-slider-two px-md-2">
+        <div class="row slider-two text-center">
+            <div class="col-md-2 product pt-md-5 pt-4">
+                <img src="~/Content/images/oppo-reno.png" alt="Oppo Reno" />
+                <span class="border site-btn btn-span">Oppo Reno</span>
+            </div>
+            <div class="col-md-2 product pt-md-5 pt-4">
+                <img src="~/Content/images/ss-s10.png" alt="Samsung Galaxy S10+" />
+                <span class="border site-btn btn-span">Samsung Galaxy S10+</span>
+            </div>
+            <div class="col-md-2 product pt-md-5 pt-4">
+                <img src="~/Content/images/huawei-p30-lite.png" alt="Huawei P30-Lite" />
+                <span class="border site-btn btn-span">Huawei P30-Lite</span>
+            </div>
+            <div class="col-md-2 product pt-md-5 pt-4">
+                <img src="~/Content/images/huawei-p30-pro.png" alt="Huewei P30 Pro" />
+                <span class="border site-btn btn-span">Huewei P30-Pro</span>
+            </div>
+            <div class="col-md-2 product pt-md-5 pt-4">
+                <img src="~/Content/images/oppo-f11-pro.png" alt="Oppo F11 Pro" />
+                <span class="border site-btn btn-span">Oppo F11 Pro</span>
+            </div>
+            <div class="col-md-2 product pt-md-5 pt-4">
+                <img src="~/Content/images/samsung-galaxy-note-10.png" alt="Samsung Galaxy Note 10" />
+                <span class="border site-btn btn-span">Samsung Galaxy Note 10</span>
+            </div>
+        </div>
+        <div class="slider-btn">
+            <span class="prev position"><i class="fas fa-chevron-left fa-2x product-chevron"></i></span>
+            <span class="next position right"><i class="fas fa-chevron-right fa-2x product-chevron"></i></span>
+        </div>
+    </div>
+</div>
+<div class="container pt-2 slider-three">
+    <div class="navigat border">
+        <h2>Điện thoại nổi bật</h2>
+    </div>
+    <ul class="homeproduct border d-flex justify-content-center">
+        @foreach (var sanPham in listDienThoai)
+        {
+            <li class="product-img">
+                <a href="/chitietsanpham?IdSanPham=@sanPham.SanPhamId">
+                    <img class="lazyloaded control" src='~/Content/@sanPham.ImgDaiDien' alt="@sanPham.TenSanPham" />
+                    <h3>@Html.DisplayFor(modelItem => @sanPham.TenSanPham)</h3>
+                    <div class="price">
+                        @{
+            var gia = sanPham.KhuyenMai != null ? sanPham.GiaBan - sanPham.KhuyenMai.SoTienGiam : sanPham.GiaBan;
+            var strGia = AppHelper.FormatMoney(gia);
+                        }
+                        <strong>@Html.DisplayFor(modelItem => strGia)</strong>
+                        @if (sanPham.KhuyenMai != null)
+                        {
+                            strGia = AppHelper.FormatMoney(sanPham.GiaBan);
+                            <span>@Html.DisplayFor(modelItem => strGia)</span>
+                        }
+                    </div>
+                    @if (sanPham.KhuyenMai != null)
+                    {
+                        strGia = AppHelper.FormatMoney(sanPham.KhuyenMai.SoTienGiam);
+                        <label class="discount1">Giảm @Html.DisplayFor(modelItem => strGia)</label>
+                    }
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+<div class="container pt-2 slider-four">
+    <div class="navigat border">
+        <h2>Tablet nổi bật</h2>
+    </div>
+    <ul class="homeproduct border d-flex justify-content-center">
+        @foreach (var sanPham in listMayTinhBang)
+        {
+            <li class="product-img">
+                <a href="/chitietsanpham?IdSanPham=@sanPham.SanPhamId">
+                    <img class="lazyloaded control" src='~/Content/@sanPham.ImgDaiDien' alt="@sanPham.TenSanPham" />
+                    <h3>@Html.DisplayFor(modelItem => @sanPham.TenSanPham)</h3>
+                    <div class="price">
+                        @{
+            var gia = sanPham.KhuyenMai != null ? sanPham.GiaBan - sanPham.KhuyenMai.SoTienGiam : sanPham.GiaBan;
+            var strGia = AppHelper.FormatMoney(gia);
+                        }
+                        <strong>@Html.DisplayFor(modelItem => strGia)</strong>
+                        @if (sanPham.KhuyenMai != null)
+                        {
+                            strGia = AppHelper.FormatMoney(sanPham.GiaBan);
+                            <span>@Html.DisplayFor(modelItem => strGia)</span>
+                        }
+                    </div>
+                    @if (sanPham.KhuyenMai != null)
+                    {
+                        strGia = AppHelper.FormatMoney(sanPham.KhuyenMai.SoTienGiam);
+                        <label class="discount1">Giảm @Html.DisplayFor(modelItem => strGia)</label>
+                    }
+                </a>
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,2 @@
+b1: build solution(nếu lỗi mở package manager console restore package lại sao đó thực hiện lại b1 -> b2).
+b2: package manager console : gõ Update-Database
